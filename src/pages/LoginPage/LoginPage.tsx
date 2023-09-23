@@ -32,7 +32,7 @@ const LoginPage = () => {
   const [values, setValues] = useState<Inputs>(defaultValues);
   const [error, setError] = useState<Error>(errorState);
   const { username, password } = values;
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -105,7 +105,6 @@ const LoginPage = () => {
               accessToken: authenticate.data.token,
             });
             navigate("/dashboard");
-            console.log("I am being triggered");
           }
         }
       } catch (error) {
@@ -114,8 +113,6 @@ const LoginPage = () => {
     };
     loginRequest();
   };
-
-  // console.log("I am being triggered");
 
   return (
     <LoginContainer

@@ -30,6 +30,19 @@ export const getAllWorkOrders = async (
   }
 };
 
+export const getRecievedMaterialonLcoation = async (
+  materialLocation: string
+) => {
+  try {
+    const response = await axios.get(
+      `${locationURL}/materials/${materialLocation}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getWorkOrderDetails = async (id: string | undefined) => {
   try {
     const response = await axios.get(`${workOrderURL}/${id}/workoder`);
@@ -137,7 +150,6 @@ export const getNewAccessToken = async () => {
     const response = await axios.get(`${URL}/refresh`, {
       withCredentials: true,
     });
-    console.log(response);
     return response.data;
   } catch (error) {
     console.log(error);

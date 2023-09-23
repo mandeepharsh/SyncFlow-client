@@ -6,42 +6,38 @@ import { IssuedMaterialLog } from "../../model";
 import Loading from "../../components/Loading/Loading";
 import TablesHeader from "../../components/TablesHeader/TablesHeader";
 
-
-
-
 const IssuanceLog = () => {
-  const [searchField , setSearchField] = useState<string>("")
-  const [issuedMaterial, setIssuedMaterial] = useState<IssuedMaterialLog[]>()
+  const [searchField, setSearchField] = useState<string>("");
+  const [issuedMaterials, setIssuedMaterials] = useState<IssuedMaterialLog[]>();
   useEffect(() => {
     const fetchIssuedMaterials = async () => {
-      try {
-        const response = await getIssuedMaterial()
-        setIssuedMaterial(response.data)
-
-      } catch (error) {
-        console.log(error)
-      }
-    }
+      const { data } = await getIssuedMaterial();
+      setIssuedMaterials(data);
+    };
     fetchIssuedMaterials();
-  }, [])
+  }, []);
 
-  const onChangeHandler = (event :React.ChangeEvent<HTMLInputElement> ) =>{
-      let value = event.target.value
-      setSearchField(value)
-  }    
+  const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = event.target.value;
+    setSearchField(value);
+  };
 
-  if(!issuedMaterial){
-    return <Loading/>
-  }
-  const filteredArray =  issuedMaterial.filter((eachMaterial) =>{
-    return eachMaterial.material_number.toLowerCase().includes(searchField.toLowerCase())
-   })
+  if (!issuedMaterials) return <Loading />;
 
+  // materinal number is the id of the material
+  const filteredArray = issuedMaterials.filter((material) => {
+    return material.material_number
+      .toLowerCase()
+      .includes(searchField.toLowerCase());
+  });
 
   return (
     <section className="issuance-log">
-      <TablesHeader title="Issuance Log" searchField={searchField} onChangeHandler={onChangeHandler} />
-    
+      <TablesHeader
+        title="Issuance Log"
+        searchField={searchField}
+        onChangeHandler={onChangeHandler}
+      />
 
       <div className="issuance-log-table">
         <div className="issuance-log-table__header">
@@ -52,10 +48,10 @@ const IssuanceLog = () => {
           <p className="issuance-log-table__title">Date Issued</p>
           <p className="issuance-log-table__title">Employees Issued</p>
         </div>
-        <IssuanceLogTable issuedMaterial= {filteredArray} />
+        <IssuanceLogTable issuedMaterial={filteredArray} />
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default IssuanceLog
+export default IssuanceLog;

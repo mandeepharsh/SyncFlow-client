@@ -1,12 +1,14 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import "./LocationPage.scss";
 import LocationComponent from "../../components/LocationComponent/LocationComponent";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Locations, Material } from "../../model";
-import { updateMaterialLocation } from "../../utils/api";
+import {
+  getLocations,
+  getRecievedMaterialonLcoation,
+  updateMaterialLocation,
+} from "../../utils/api";
 import Loading from "../../components/Loading/Loading";
-import { locationURL } from "../../utils/api";
 interface LocationContainer {
   location: Locations;
   materials: Material[];
@@ -17,28 +19,26 @@ const LocationPage = () => {
   const [isLimitReached, setIsLimitReached] = useState(false);
 
   useEffect(() => {
-    axios.get(locationURL).then((res) => {
-      const locationsWithMaterial = res.data.map(
+    const fetchLocaionsMaterial = async () => {
+      const locations = await getLocations();
+      const materialsOnLocation = await locations.map(
         async (location: Locations) => {
-          const materialsRes = await axios.get(
-            `${locationURL}/materials/${location.location}`
+          const materials = await getRecievedMaterialonLcoation(
+            location.location
           );
           return {
             location: location,
-            materials: materialsRes.data.filter(
-              (material: Material) => material.status === "received"
-            ),
+            materials: materials,
           };
         }
       );
-      Promise.all(locationsWithMaterial).then((completed) =>
-        setLocations(completed)
-      );
-    });
+      const materialWithLocations = await Promise.all(materialsOnLocation);
+      setLocations(materialWithLocations);
+    };
+    fetchLocaionsMaterial();
   }, []);
-  if (!locations) {
-    return <Loading />;
-  }
+
+  if (!locations) return <Loading />;
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
