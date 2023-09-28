@@ -7,11 +7,7 @@ import { getEmployees } from "../../utils/api";
 const EmployeeData = () => {
   const { auth } = useAuth();
   useEffect(() => {
-    const employeeData = async () => {
-      const response = await getEmployees(auth.accessToken);
-      console.log(response);
-    };
-    employeeData();
+    getEmployees(auth.accessToken);
   }, []);
 
   return (
